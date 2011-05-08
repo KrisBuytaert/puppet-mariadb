@@ -20,11 +20,11 @@ class maria::packages {
 
 
 	package {
-		"MySQL-OurDelta-server":
-			alias  => "MySQL-server-community",
+		"MySQL-OurDelta-server.$hardwaremodel":
+            alias => "MySQL-server",
 			ensure => "installed";
-		"MySQL-OurDelta-client":
-			alias  => "MySQL-client-community",
+		"MySQL-OurDelta-client.$hardwaremodel":
+            alias => "MySQL-client",
 			ensure => "installed";
 
 	}
