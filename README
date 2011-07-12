@@ -1,0 +1,4 @@
+Puppet module to install mariadb from either debian or yum repositories.
+
+
+Does not include configuration of the service. For that you can use a general MySQL module 
