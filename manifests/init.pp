@@ -24,7 +24,7 @@ class maria::yumrepository {
 
 }
 
-class maria::aptrepo {
+class maria::aptrepository {
 
   $release = '5.5'
 
