@@ -1,15 +1,29 @@
 class maria::yumrepository {
 
-   $basearch = "i386"
+  $release = "5.5"
+
+  $os   = $::operatingsystem ? {
+    'RedHat'    => 'rhel',
+    'LinuxMint' => 'ubuntu',
+    default     => inline_template('<%= @operatingsystem.downcase %>'),
+  }
+
+  $arch = $::architecture ? {
+    /^.*86$/ => 'x86',
+    /^.*64$/ => 'amd64',
+    default   => $::architecture,
+  }
+
    yumrepo {
 
 
 	 
-   "ourdelta":
-            descr       => "Ourdelta",
+   "mariadb":
+            descr       => "MariaDB Yum Repo",
             enabled     => 1,
-            gpgcheck    => 0,
-            baseurl     => "http://master.ourdelta.org/yum/CentOS-MySQL50/5Server/"; 
+            gpgcheck    => 1,
+            gpgkey      => 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB',
+            baseurl     => "http://yum.mariadb.org/${release}/${os}${::lsbmajdistrelease}-${arch}";
         
 
 }
@@ -18,18 +32,33 @@ class maria::yumrepository {
 }
 
 class maria::aptrepo {
+
+  $release = "5.5"
+
+  $os   = $::operatingsystem ? {
+    'RedHat'    => 'rhel',
+    'LinuxMint' => 'ubuntu',
+    default     => inline_template('<%= @operatingsystem.downcase %>'),
+  }
+
+  $arch = $::architecture ? {
+    /^.*86$/ => 'x86',
+    /^.*64$/ => 'amd64',
+    default   => $::architecture,
+  }
+
 	exec {"Import MariaDB Apt repo key":
-		command => "/usr/bin/apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1BB943DB && /usr/bin/touch /root/.my.keyimported",
+		command => "/usr/bin/apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db && /usr/bin/touch /root/.my.keyimported",
 		refreshonly => true,
 		creates => "/root/.my.keyimported",
 	}
 
 
 	file { "/etc/apt/sources.list.d/maria.list":	
-		content => "# MariaDB repository list - created 2011-07-05 07:31 UTC
-# http://downloads.askmonty.org/mariadb/repositories/
-deb http://mirror.switch.ch/mirror/mariadb/repo/5.2/debian squeeze main
-deb-src http://mirror.switch.ch/mirror/mariadb/repo/5.2/debian squeeze main";
+		content => "# MariaDB repository list
+# http://mariadb.org/mariadb/repositories/
+deb http://ftp.osuosl.org/pub/mariadb/repo/${release}/${os} ${::lsbdistcodename} main
+deb-src http://ftp.osuosl.org/pub/mariadb/repo/${release}/${os} ${::lsbdistcodename} main";
 		
 	
 	}
@@ -51,10 +80,10 @@ class maria::rpmpackages {
 
 
    $basearch = "i386"
-	package { "MySQL-OurDelta-server.$basearch":
+	package { "MariaDB-server":
             		alias  => "MySQL-server",
 			ensure => "installed";
-		"MySQL-OurDelta-client.$basearch":
+		"MariaDB-client":
             		alias  => "MySQL-client",
 			ensure => "installed";
 
