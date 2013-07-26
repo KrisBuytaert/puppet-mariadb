@@ -78,3 +78,17 @@ class maria::rpmpackages {
   }
 
 }
+
+class maria::mytop {
+
+  package { 'mytop':
+    ensure => 'absent',
+  }
+
+  exec { 'Download MariaDB mytop':
+    command => '/usr/bin/wget -O /usr/bin/mytop https://raw.github.com/atcurtis/mariadb/master/scripts/mytop.sh && /bin/chmod a+x /usr/bin/mytop',
+    creates => '/usr/bin/mytop',
+    require => Package['mytop'],
+  }
+
+}
